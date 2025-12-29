@@ -1,0 +1,8 @@
+[33mcommit c90a72bf5d50c350e102edd8e0f89cd0ce51e041[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: hippolite-oss <hippoliteagbodamakou@gmail.com>
+Date:   Sat Dec 27 22:32:21 2025 +0100
+
+    delete: remove Projets and Rapports components and their related logic
+
+src/pages/Projets.tsx
+src/pages/Rapports.tsx
