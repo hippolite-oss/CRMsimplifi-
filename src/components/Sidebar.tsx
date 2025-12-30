@@ -92,7 +92,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       submenu: [
         { title: "Mouvements", icon: ClipboardList, path: "/stock/mouvements" },
         { title: "Historique", icon: History, path: "/stock/historique" },
-        { title: "État", icon: Box, path: "/stock/etat" },
+        { title: "Sortie Stock", icon: Box, path: "/stock/sortir" },
+         { title: "Ajouter Stock", icon: Box, path: "/stock/ajouter" },
       ],
     },
     { id: "activites", title: "Activités", icon: Calendar, path: "/activites" },
