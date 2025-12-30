@@ -1,12 +1,22 @@
 // pages/NewClient.tsx
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent } from "react";
 
-import { useNavigate } from 'react-router-dom';
-import { 
-  Users, UserPlus, Phone, MapPin, AlertCircle, CheckCircle, 
-  Loader2, ArrowLeft, Upload, X, Image as ImageIcon 
-} from 'lucide-react';
+import { useNavigate } from "react-router-dom";
+import {
+  Users,
+  UserPlus,
+  Phone,
+  MapPin,
+  AlertCircle,
+  CheckCircle,
+  Loader2,
+  ArrowLeft,
+  Upload,
+  X,
+  Image as ImageIcon,
+} from "lucide-react";
 
+import PageWrapper from "../components/PageWrapper";
 
 // Types pour Redux state
 interface RootState {
@@ -15,7 +25,7 @@ interface RootState {
 
 // Type pour formData
 interface FormDataState {
-  type: 'normal' | 'comptoir';
+  type: "normal" | "comptoir";
   nom: string;
   prenom: string;
   telephone: string;
@@ -35,24 +45,26 @@ const NewClient = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [uploading, setUploading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
 
   const [formData, setFormData] = useState<FormDataState>({
-    type: 'normal', // 'normal' ou 'comptoir'
-    nom: '',
-    prenom: '',
-    telephone: '',
-    adresse: ''
+    type: "normal", // 'normal' ou 'comptoir'
+    nom: "",
+    prenom: "",
+    telephone: "",
+    adresse: "",
   });
 
   // Gestion de la carte d'identité
   const [carteFile, setCarteFile] = useState<File | null>(null);
   const [cartePreview, setCartePreview] = useState<string | null>(null);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setError('');
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setError("");
   };
 
   // Gestion de l'upload de la carte
@@ -61,20 +73,20 @@ const NewClient = () => {
     if (!file) return;
 
     // Validation
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
-      setError('Format non autorisé. Utilisez JPG, PNG ou WEBP');
+      setError("Format non autorisé. Utilisez JPG, PNG ou WEBP");
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setError('Image trop volumineuse (max 5 Mo)');
+      setError("Image trop volumineuse (max 5 Mo)");
       return;
     }
 
     setCarteFile(file);
     setCartePreview(URL.createObjectURL(file));
-    setError('');
+    setError("");
   };
 
   const removeCarte = () => {
@@ -89,30 +101,32 @@ const NewClient = () => {
     e.preventDefault();
 
     if (!formData.nom.trim()) {
-      setError('Le nom est obligatoire');
+      setError("Le nom est obligatoire");
       return;
     }
 
-    if (formData.type === 'normal' && !formData.telephone.trim()) {
-      setError('Le téléphone est obligatoire pour un client normal');
+    if (formData.type === "normal" && !formData.telephone.trim()) {
+      setError("Le téléphone est obligatoire pour un client normal");
       return;
     }
 
     setLoading(true);
-    setError('');
+    setError("");
     setSuccess(false);
 
     try {
       let carte_identite_url: string | undefined = undefined;
 
       // Upload de la carte si présente (seulement pour client normal)
-      if (formData.type === 'normal' && carteFile) {
+      if (formData.type === "normal" && carteFile) {
         setUploading(true);
         const uploadResult: UploadResult = await uploadImage(carteFile);
         setUploading(false);
 
         if (!uploadResult.success) {
-          setError(uploadResult.message || 'Erreur lors de l\'upload de la carte');
+          setError(
+            uploadResult.message || "Erreur lors de l'upload de la carte"
+          );
           setLoading(false);
           return;
         }
@@ -120,33 +134,35 @@ const NewClient = () => {
         carte_identite_url = uploadResult.image_url;
       }
 
-      const response = await Axios.post('/api/clients', {
+      const response = await Axios.post("/api/clients", {
         nom: formData.nom.trim(),
         prenom: formData.prenom.trim(),
-        telephone: formData.type === 'normal' ? formData.telephone.trim() : undefined,
+        telephone:
+          formData.type === "normal" ? formData.telephone.trim() : undefined,
         adresse: formData.adresse.trim(),
         type: formData.type,
-        carte_identite: carte_identite_url // ← Champ envoyé au backend
+        carte_identite: carte_identite_url, // ← Champ envoyé au backend
       });
 
       if (response.data.success) {
         setSuccess(true);
         setFormData({
-          type: 'normal',
-          nom: '',
-          prenom: '',
-          telephone: '',
-          adresse: ''
+          type: "normal",
+          nom: "",
+          prenom: "",
+          telephone: "",
+          adresse: "",
         });
         setCarteFile(null);
         setCartePreview(null);
 
         setTimeout(() => {
-          navigate('/admin/clients');
+          navigate("/admin/clients");
         }, 2000);
       }
     } catch (error: any) {
-      const msg = error.response?.data?.message || 'Erreur lors de la création du client';
+      const msg =
+        error.response?.data?.message || "Erreur lors de la création du client";
       setError(msg);
     } finally {
       setLoading(false);
@@ -154,13 +170,15 @@ const NewClient = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 max-w-4xl mx-auto">
+    <PageWrapper >
       {/* Messages */}
       {error && (
         <div className="mb-6 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-xl p-4 flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="font-semibold text-red-900 dark:text-red-200">Erreur</p>
+            <p className="font-semibold text-red-900 dark:text-red-200">
+              Erreur
+            </p>
             <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
           </div>
         </div>
@@ -170,7 +188,9 @@ const NewClient = () => {
         <div className="mb-6 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-xl p-4 flex items-start gap-3">
           <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="font-semibold text-green-900 dark:text-green-200">Succès</p>
+            <p className="font-semibold text-green-900 dark:text-green-200">
+              Succès
+            </p>
             <p className="text-sm text-green-700 dark:text-green-300">
               Client créé avec succès ! Redirection...
             </p>
@@ -179,31 +199,29 @@ const NewClient = () => {
       )}
 
       {/* En-tête */}
-      <div className="mb-8">
-        <div className="flex flex-col gap-6 sm:gap-8 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-start gap-4 sm:gap-5">
-            <div className="flex-shrink-0 p-3 sm:p-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg">
-              <UserPlus className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
-                Nouveau client
-              </h1>
-              <p className="mt-1 text-sm sm:text-base text-gray-600 dark:text-gray-400">
-                Ajouter un client normal ou un client comptoir
-              </p>
-            </div>
+      <div className="flex flex-col gap-6 sm:gap-8 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-start gap-4 sm:gap-5">
+          <div className="flex-shrink-0 p-3 sm:p-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg">
+            <UserPlus className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
           </div>
 
-          <button
-            onClick={() => navigate('/clients')}
-            className="flex items-center gap-2 px-5 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-xl transition"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Retour à la liste
-          </button>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
+              Nouveau client
+            </h1>
+            <p className="mt-1 text-sm sm:text-base text-gray-600 dark:text-gray-400">
+              Ajouter un client normal ou un client comptoir
+            </p>
+          </div>
         </div>
+
+        <button
+          onClick={() => navigate("/clients/list")}
+          className="flex items-center gap-2 px-5 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-xl transition"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Retour à la liste
+        </button>
       </div>
 
       {/* Formulaire */}
@@ -215,23 +233,27 @@ const NewClient = () => {
               Type de client
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <label className={`flex items-center gap-5 p-6 rounded-2xl border-2 cursor-pointer transition-all shadow-md ${
-                formData.type === 'normal'
-                  ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30'
-                  : 'border-gray-200 dark:border-zinc-700 hover:border-gray-300 dark:hover:border-zinc-600'
-              }`}>
+              <label
+                className={`flex items-center gap-5 p-6 rounded-2xl border-2 cursor-pointer transition-all shadow-md ${
+                  formData.type === "normal"
+                    ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30"
+                    : "border-gray-200 dark:border-zinc-700 hover:border-gray-300 dark:hover:border-zinc-600"
+                }`}
+              >
                 <input
                   type="radio"
                   name="type"
                   value="normal"
-                  checked={formData.type === 'normal'}
+                  checked={formData.type === "normal"}
                   onChange={handleChange}
                   className="w-6 h-6 text-indigo-600 focus:ring-indigo-500"
                 />
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
                     <Users className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
-                    <span className="text-lg font-semibold text-gray-900 dark:text-white">Client normal</span>
+                    <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Client normal
+                    </span>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
                     Avec téléphone unique, ardoise et carte d'identité possible
@@ -239,23 +261,27 @@ const NewClient = () => {
                 </div>
               </label>
 
-              <label className={`flex items-center gap-5 p-6 rounded-2xl border-2 cursor-pointer transition-all shadow-md ${
-                formData.type === 'comptoir'
-                  ? 'border-green-500 bg-green-50 dark:bg-green-950/30'
-                  : 'border-gray-200 dark:border-zinc-700 hover:border-gray-300 dark:hover:border-zinc-600'
-              }`}>
+              <label
+                className={`flex items-center gap-5 p-6 rounded-2xl border-2 cursor-pointer transition-all shadow-md ${
+                  formData.type === "comptoir"
+                    ? "border-green-500 bg-green-50 dark:bg-green-950/30"
+                    : "border-gray-200 dark:border-zinc-700 hover:border-gray-300 dark:hover:border-zinc-600"
+                }`}
+              >
                 <input
                   type="radio"
                   name="type"
                   value="comptoir"
-                  checked={formData.type === 'comptoir'}
+                  checked={formData.type === "comptoir"}
                   onChange={handleChange}
                   className="w-6 h-6 text-green-600 focus:ring-green-500"
                 />
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
                     <Users className="w-7 h-7 text-green-600 dark:text-green-400" />
-                    <span className="text-lg font-semibold text-gray-900 dark:text-white">Client comptoir</span>
+                    <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Client comptoir
+                    </span>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
                     Ventes anonymes (code auto-généré)
@@ -298,7 +324,7 @@ const NewClient = () => {
           </div>
 
           {/* Téléphone (client normal uniquement) */}
-          {formData.type === 'normal' && (
+          {formData.type === "normal" && (
             <div>
               <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 Téléphone <span className="text-red-500">*</span>
@@ -322,7 +348,7 @@ const NewClient = () => {
           )}
 
           {/* Carte d'identité (client normal uniquement) */}
-          {formData.type === 'normal' && (
+          {formData.type === "normal" && (
             <div>
               <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
                 Photo de la carte d'identité (optionnel)
@@ -390,7 +416,7 @@ const NewClient = () => {
           <div className="pt-8 flex flex-col sm:flex-row gap-6">
             <button
               type="button"
-              onClick={() => navigate('/admin/clients')}
+              onClick={() => navigate("/admin/clients")}
               disabled={loading}
               className="flex-1 py-5 bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-2xl font-bold text-lg transition-all disabled:opacity-70"
             >
@@ -405,7 +431,7 @@ const NewClient = () => {
               {loading || uploading ? (
                 <>
                   <Loader2 className="w-7 h-7 animate-spin" />
-                  {uploading ? 'Upload de la carte...' : 'Création en cours...'}
+                  {uploading ? "Upload de la carte..." : "Création en cours..."}
                 </>
               ) : (
                 <>
@@ -417,7 +443,7 @@ const NewClient = () => {
           </div>
         </form>
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 

@@ -1,28 +1,31 @@
-import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import TopBar from "../components/Topbar";
 import SideBar from "../components/Sidebar";
+import { useState } from "react";
 
 const Layout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-  const closeSidebar = () => setSidebarOpen(false);
+  const openSidebar = () => setIsSidebarOpen(true);
+  const closeSidebar = () => setIsSidebarOpen(false);
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-zinc-950 text-gray-900 dark:text-slate-100 overflow-hidden">
-      {/* Sidebar fixe */}
-      <SideBar isOpen={sidebarOpen} onClose={closeSidebar} />
+    <div className="flex h-screen bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-slate-100 overflow-hidden">
+      {/* Sidebar */}
+      <SideBar
+        isOpen={isSidebarOpen}
+        onClose={closeSidebar}
+        onOpen={openSidebar}
+      />
 
       {/* Contenu principal */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Topbar fixe */}
-        <TopBar onMenuClick={toggleSidebar} />
+      <div className="flex-1 flex flex-col bg-white dark:bg-zinc-900">
+        {/* Topbar */}
+        <TopBar />
 
-        {/* Contenu principal */}
-        <main className="flex-1 overflow-auto p-6 sm:p-8 lg:p-12">
-          {/* Centrer le contenu et limiter la largeur */}
-          <div className="max-w-15xl mx-auto">
+        {/* Zone de contenu */}
+        <main className="flex-1 overflow-y-auto pt-16">
+          <div className="h-full">
             <Outlet />
           </div>
         </main>

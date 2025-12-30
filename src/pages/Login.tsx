@@ -1,19 +1,12 @@
 // LoginPage.tsx
-import React, { useState, FormEvent, ChangeEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { 
-  Lock, 
-  Mail, 
-  Eye, 
-  EyeOff, 
-  AlertCircle, 
-  Loader2 
-} from 'lucide-react';
-import Axios from '../utils/Axios';
-import { setUserDetails } from '../store/userSlice';
-import { setCentres, setCurrentCentre } from '../store/centresSlice';
-import { AppDispatch } from '../store';
+import React, { useState, FormEvent, ChangeEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Lock, Mail, Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
+import Axios from "../utils/Axios";
+import { setUserDetails } from "../store/userSlice.ts";
+import { setCentres, setCurrentCentre } from "../store/centresSlice.ts";
+import { AppDispatch } from "../store";
 
 // Types
 interface FormData {
@@ -40,7 +33,7 @@ interface User {
   id: string;
   email: string;
   name: string;
-  role: 'admin' | 'vendeur' | string;
+  role: "admin" | "vendeur" | string;
   centre?: Centre;
 }
 
@@ -57,16 +50,16 @@ interface CentresResponse {
   message?: string;
 }
 
-const LoginPage: React.FC = () => {
+const Login: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
-  
+
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [loginError, setLoginError] = useState<string>('');
+  const [loginError, setLoginError] = useState<string>("");
   const [rememberMe, setRememberMe] = useState<boolean>(false);
 
   const navigate = useNavigate();
@@ -78,15 +71,15 @@ const LoginPage: React.FC = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!formData.email.trim()) {
-      newErrors.email = 'L\'email est requis';
+      newErrors.email = "L'email est requis";
     } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Format d\'email invalide';
+      newErrors.email = "Format d'email invalide";
     }
 
     if (!formData.password) {
-      newErrors.password = 'Le mot de passe est requis';
+      newErrors.password = "Le mot de passe est requis";
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Minimum 6 caractères';
+      newErrors.password = "Minimum 6 caractères";
     }
 
     return newErrors;
@@ -95,21 +88,21 @@ const LoginPage: React.FC = () => {
   // Gestion des changements
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
-    
-    setFormData(prev => ({
+
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     // Effacer l'erreur quand l'utilisateur commence à taper
     if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
-    
-    setLoginError('');
+
+    setLoginError("");
   };
 
   // Soumission du formulaire
@@ -123,13 +116,13 @@ const LoginPage: React.FC = () => {
     }
 
     setIsLoading(true);
-    setLoginError('');
+    setLoginError("");
 
     try {
       // Appel API de connexion
-      const response = await Axios.post<LoginResponse>('/api/users/login', {
+      const response = await Axios.post<LoginResponse>("/api/users/login", {
         email: formData.email,
-        password: formData.password
+        password: formData.password,
       });
 
       if (response.data.success) {
@@ -138,39 +131,39 @@ const LoginPage: React.FC = () => {
         // Stocker les tokens
         if (rememberMe) {
           // Si "Se souvenir de moi" est coché, stocker dans localStorage
-          localStorage.setItem('accessToken', accessToken);
-          localStorage.setItem('refreshToken', refreshToken);
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
         } else {
           // Sinon, stocker dans sessionStorage (expire à la fermeture du navigateur)
-          sessionStorage.setItem('accessToken', accessToken);
-          sessionStorage.setItem('refreshToken', refreshToken);
+          sessionStorage.setItem("accessToken", accessToken);
+          sessionStorage.setItem("refreshToken", refreshToken);
         }
 
         // Mettre à jour Redux avec les infos utilisateur
         dispatch(setUserDetails(user));
-        
+
         // Gestion des centres selon le rôle
-        if (user.role === 'vendeur') {
+        if (user.role === "vendeur") {
           // vendeur = 1 seul centre
           const centre = user.centre ? [user.centre] : [];
           dispatch(setCentres(centre));
           dispatch(setCurrentCentre(user.centre || null));
-        } else if (user.role === 'admin') {
+        } else if (user.role === "admin") {
           // admin = récupérer tous les centres
-          const centresRes = await Axios.get<CentresResponse>('/api/centres');
+          const centresRes = await Axios.get<CentresResponse>("/api/centres");
           const centres = centresRes.data.data || [];
-          console.log('Centres récupérés pour admin:', centres);
+          console.log("Centres récupérés pour admin:", centres);
           dispatch(setCentres(centres));
           dispatch(setCurrentCentre(centres[0] || null));
         }
 
         // Navigation
-        navigate('/admin');
+        navigate("/admin");
       } else {
-        setLoginError(response.data.message || 'Erreur de connexion');
+        setLoginError(response.data.message || "Erreur de connexion");
       }
     } catch (error: any) {
-      console.error('Erreur login:', error);
+      console.error("Erreur login:", error);
 
       // Gestion des différents types d'erreurs
       if (error.response) {
@@ -179,21 +172,23 @@ const LoginPage: React.FC = () => {
 
         switch (status) {
           case 404:
-            setLoginError('Email ou mot de passe incorrect');
+            setLoginError("Email ou mot de passe incorrect");
             break;
           case 400:
-            setLoginError(message || 'Email ou mot de passe incorrect');
+            setLoginError(message || "Email ou mot de passe incorrect");
             break;
           case 403:
-            setLoginError(message || 'Votre compte a été désactivé');
+            setLoginError(message || "Votre compte a été désactivé");
             break;
           default:
-            setLoginError('Une erreur est survenue. Veuillez réessayer.');
+            setLoginError("Une erreur est survenue. Veuillez réessayer.");
         }
       } else if (error.request) {
-        setLoginError('Impossible de contacter le serveur. Vérifiez votre connexion.');
+        setLoginError(
+          "Impossible de contacter le serveur. Vérifiez votre connexion."
+        );
       } else {
-        setLoginError('Une erreur inattendue est survenue.');
+        setLoginError("Une erreur inattendue est survenue.");
       }
     } finally {
       setIsLoading(false);
@@ -203,7 +198,7 @@ const LoginPage: React.FC = () => {
   // Style constants
   const inputClass = `
     w-full px-4 py-3 pl-12 bg-gray-50 border 
-    ${errors.email || errors.password ? 'border-red-300' : 'border-gray-300'} 
+    ${errors.email || errors.password ? "border-red-300" : "border-gray-300"} 
     rounded-lg focus:outline-none focus:ring-2 
     focus:ring-blue-500 focus:border-transparent 
     transition-all duration-200
@@ -302,7 +297,11 @@ const LoginPage: React.FC = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                   disabled={isLoading}
-                  aria-label={showPassword ? "Cacher le mot de passe" : "Afficher le mot de passe"}
+                  aria-label={
+                    showPassword
+                      ? "Cacher le mot de passe"
+                      : "Afficher le mot de passe"
+                  }
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
@@ -325,11 +324,16 @@ const LoginPage: React.FC = () => {
                 type="checkbox"
                 id="remember"
                 checked={rememberMe}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setRememberMe(e.target.checked)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setRememberMe(e.target.checked)
+                }
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 disabled={isLoading}
               />
-              <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">
+              <label
+                htmlFor="remember"
+                className="ml-2 block text-sm text-gray-700"
+              >
                 Se souvenir de moi
               </label>
             </div>
@@ -345,18 +349,14 @@ const LoginPage: React.FC = () => {
             )}
 
             {/* Bouton de connexion */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={buttonClass}
-            >
+            <button type="submit" disabled={isLoading} className={buttonClass}>
               {isLoading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
                   Connexion en cours...
                 </>
               ) : (
-                'Se connecter'
+                "Se connecter"
               )}
             </button>
           </form>
@@ -377,4 +377,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default Login;
