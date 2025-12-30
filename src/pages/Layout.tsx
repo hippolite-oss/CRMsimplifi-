@@ -1,8 +1,7 @@
-// ========== Layout.jsx ==========
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import TopBar from "../components/TopBar";
-import SideBar from "../components/SideBar";
+import TopBar from "../components/Topbar";
+import SideBar from "../components/Sidebar";
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -11,16 +10,21 @@ const Layout = () => {
   const closeSidebar = () => setSidebarOpen(false);
 
   return (
-    <div className="flex h-screen bg-white dark:bg-zinc-950 text-gray-900 dark:text-slate-100">
-      {/* Sidebar */}
+    <div className="flex h-screen bg-gray-100 dark:bg-zinc-950 text-gray-900 dark:text-slate-100 overflow-hidden">
+      {/* Sidebar fixe */}
       <SideBar isOpen={sidebarOpen} onClose={closeSidebar} />
 
-      {/* Main content */}
+      {/* Contenu principal */}
       <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Topbar fixe */}
         <TopBar onMenuClick={toggleSidebar} />
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 xl:p-12 xl:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-zinc-900 dark:to-zinc-950">
-          <Outlet />
+        {/* Contenu principal */}
+        <main className="flex-1 overflow-auto p-6 sm:p-8 lg:p-12">
+          {/* Centrer le contenu et limiter la largeur */}
+          <div className="max-w-15xl mx-auto">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
