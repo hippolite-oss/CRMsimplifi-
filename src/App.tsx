@@ -25,7 +25,7 @@ import Centre from './pages/Centre';
 import Home from './pages/Home';
 import Otp from './pages/Otp';
 import Users from './pages/Users';
-import Login from './pages/Login';
+import Login from './pages/LoginPge';
 import ForgotPassword from './pages/Forgotpassword';
 import Commande from './pages/Commande';
 

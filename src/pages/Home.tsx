@@ -41,19 +41,19 @@ const Home = () => {
   // Slides pour le hero avec chemins depuis le dossier public
   const slides = [
     { 
-      image: "/i1.jpg", 
+      image: "/b6.jpg", 
       title: "Gérez vos relations client efficacement", 
       subtitle: "Augmentez vos ventes de 45% avec notre CRM intelligent", 
       cta: "Essai gratuit 30 jours" 
     },
     { 
-      image: "/i2.jpg", 
+      image: "/b7.jpg", 
       title: "Automatisez vos processus commerciaux", 
       subtitle: "Réduisez le temps administratif de 70%", 
       cta: "Voir les fonctionnalités" 
     },
     { 
-      image: "/i3.jpg", 
+      image: "b8.jpg", 
       title: "Suivez vos performances en temps réel", 
       subtitle: "Tableaux de bord personnalisés pour une meilleure prise de décision", 
       cta: "Découvrir les rapports" 
@@ -66,25 +66,25 @@ const Home = () => {
       id: 1,
       name: "CRM Enterprise Pro",
       price: "2500FCFA",
-      image: "a1.jpg",
+      image: "b1.jpg",
     },
     {
       id: 2,
       name: "CRM Business",
       price: "1000FCFA",
-      image: "f2.jpg",
+      image: "b2.jpg",
     },
     {
       id: 3,
       name: "CRM Starter",
       price: "5000FCFA",
-      image: "a3.jpg",
+      image: "b3.jpg",
     },
     {
       id: 4,
       name: "CRM Mobile",
       price: "2000FCFA",
-      image: "f5.png",
+      image: "b4.jpg",
     },
    
   
