@@ -32,6 +32,8 @@ import Commande from './pages/Commande';
 // Import du Layout existant
 import Layout from './pages/Layout';
 import { LayoutDashboard } from 'lucide-react';
+import AddStock from './pages/AddStock';
+import StockOut from './pages/StockOut';
 
 // Composant ProtectedRoute
 const ProtectedRoute = ({ children }) => {
@@ -69,7 +71,8 @@ const App = () => {
           <Route path="/produits/nouveau" element={<NewProduct />} />
           <Route path="/stock/mouvements" element={<StockMovements />} />
           <Route path="/stock/historique" element={<StockHistory />} />
-          <Route path="/stock/etat" element={<StockHistory />} />
+          <Route path="/stock/sortir" element={<StockOut/>} />
+          <Route path="/stock/ajouter" element={<AddStock/>} /> 
           <Route path="/activites" element={<Activitie />} />
           <Route path="/rapports" element={<Reports />} />
           <Route path="/utilisateurs" element={<Users />} />
