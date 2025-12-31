@@ -4,13 +4,16 @@ import './index.css';
 import App from './App.jsx';
 import { BrowserRouter } from 'react-router-dom'; // ← SEUL Router ici
 import { Provider } from 'react-redux';
-import { store } from './store/store.js';
+import { store } from './store/store.ts';
 
-createRoot(document.getElementById('root')).render(
+const rootElement = document.getElementById('root');
+if (!rootElement) throw new Error('Failed to find the root element');
+
+createRoot(rootElement).render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>  {/* ← Router racine unique */}
-        <App />         {/* ← App utilise Routes seulement */}
+      <BrowserRouter>
+        <App />
       </BrowserRouter>
     </Provider>
   </React.StrictMode>

@@ -1,44 +1,41 @@
-import React from 'react';
-import { 
-  Routes, 
-  Route, 
-  Navigate 
-} from 'react-router-dom';
+import { Routes, Route, Navigate } from "react-router-dom";
 
 // Import des pages
-import Reports from './pages/Reports';
-import CompanySettings from './pages/CompanySettings';
-import SettingsUsers from './pages/SettingsUsers';
-import CashRegister from './pages/CashRegister';
-import Activitie from './pages/Activitie';
-import StockHistory from './pages/StockHistory';
-import StockMovements from './pages/StockMovements';
-import NewProduct from './pages/NewProduct';
-import ProductsList from './pages/ProductsList';
-import Invoices from './pages/Invoices';
-import Quotes from './pages/Quotes';
-import NewSale from './pages/NewSale';
-import SalesHistory from './pages/SalesHistory';
-import NewClient from './pages/NewClient';
-import ClientList from './pages/ClientList';
-import Centre from './pages/Centre';
-import Home from './pages/Home';
-import Otp from './pages/Otp';
-import Users from './pages/Users';
-import Login from './pages/LoginPge';
-import ForgotPassword from './pages/Forgotpassword';
-import Commande from './pages/Commande';
+import Reports from "./pages/Reports";
+import CompanySettings from "./pages/CompanySettings";
+import SettingsUsers from "./pages/SettingsUsers";
+import CashRegister from "./pages/CashRegister";
+import Activitie from "./pages/Activitie";
+import StockHistory from "./pages/StockHistory";
+import StockMovements from "./pages/StockMovements";
+import NewProduct from "./pages/NewProduct";
+import ProductsList from "./pages/ProductsList";
+import Invoices from "./pages/Invoices";
+import Quotes from "./pages/Quotes";
+import NewSale from "./pages/NewSale";
+import SalesHistory from "./pages/SalesHistory";
+import NewClient from "./pages/NewClient";
+import ClientList from "./pages/ClientList";
+import Centre from "./pages/Centre";
+import Home from "./pages/Home";
+import Otp from "./pages/Otp";
+import Users from "./pages/Users";
+import Login from "./pages/Login";
+import ForgotPassword from "./pages/Forgotpassword";
+import Commande from "./pages/Commande";
+import Dashboard from "./pages/Dashboard";
 
 // Import du Layout existant
 import Layout from './pages/Layout';
-import { LayoutDashboard } from 'lucide-react';
 import AddStock from './pages/AddStock';
 import StockOut from './pages/StockOut';
 
 // Composant ProtectedRoute
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const isAuthenticated = true; // Remplace par ta logique
-  
+
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
@@ -55,20 +52,22 @@ const App = () => {
         <Route path="/password" element={<ForgotPassword />} />
 
         {/* Routes protégées avec Layout */}
-        <Route element={
-          <ProtectedRoute>
-            <Layout />
-          </ProtectedRoute>
-        }>
-          <Route path="/dashboard" element={<LayoutDashboard />} />
-          <Route path="/clients" element={<ClientList />} />
-          <Route path="/clients/nouveau" element={<NewClient />} />
-          <Route path="/ventes" element={<SalesHistory />} />
-          <Route path="/ventes/nouvelle" element={<NewSale />} />
-          <Route path="/devis" element={<Quotes />} />
-          <Route path="/factures" element={<Invoices />} />
-          <Route path="/produits" element={<ProductsList />} />
-          <Route path="/produits/nouveau" element={<NewProduct />} />
+        <Route
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/clients/list" element={<ClientList />} />
+          <Route path="/clients/new" element={<NewClient />} />
+          <Route path="/ventes/list" element={<SalesHistory />} />
+          <Route path="/ventes/new" element={<NewSale />} />
+          <Route path="/devis/list" element={<Quotes />} />
+          <Route path="/factures/list" element={<Invoices />} />
+          <Route path="/produits/list" element={<ProductsList />} />
+          <Route path="/produits/new" element={<NewProduct />} />
           <Route path="/stock/mouvements" element={<StockMovements />} />
           <Route path="/stock/historique" element={<StockHistory />} />
           <Route path="/stock/sortir" element={<StockOut/>} />
